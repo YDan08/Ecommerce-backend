@@ -5,6 +5,8 @@ import { ProductResolver } from "./product"
 import { db } from "./db/db"
 
 const bootstrap = async () => {
+	await db()
+
 	const schema = await buildSchema({
 		resolvers: [ProductResolver],
 	})
@@ -12,8 +14,6 @@ const bootstrap = async () => {
 	const server = new ApolloServer({
 		schema,
 	})
-
-	await db()
 
 	const { url } = await server.listen(process.env.PORT || 4000)
 
