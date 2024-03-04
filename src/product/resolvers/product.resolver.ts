@@ -1,5 +1,5 @@
 import { Arg, Mutation, Query, Resolver } from "type-graphql"
-import { CreateProductDto, GetProductDto } from "../dtos"
+import { ClaimAvailabilityDto, CreateProductDto, GetProductDto } from "../dtos"
 import { ProductModel } from "../models"
 import { ProductDb } from "../../db/models/Product.db"
 @Resolver(() => ProductModel)
@@ -20,6 +20,27 @@ export class ProductResolver {
 	@Mutation(() => ProductModel)
 	async createProduct(@Arg("data", () => CreateProductDto) data: CreateProductDto) {
 		const product = await ProductDb.create(data)
+		return product
+	}
+
+	@Mutation(() => ProductModel)
+	async claimAvailability(
+		@Arg("data", () => ClaimAvailabilityDto) data: ClaimAvailabilityDto
+	) {
+		const exist = await ProductDb.findById(data.id)
+
+		if (!exist) {
+			return "erro"
+		}
+
+		if (exist.quantity + data.quantity < 0) {
+			return "qunatidade invalida"
+		}
+
+		const product = await ProductDb.findByIdAndUpdate(data.id, {
+			quantity: exist.quantity + data.quantity,
+		})
+
 		return product
 	}
 }
