@@ -1,27 +1,34 @@
 import mongoose from "mongoose"
 
+interface IProduct {
+	name: string
+	description: string
+	image: string
+	quantity: number
+}
+
 const { Schema } = mongoose
 
-export const productSchema = new Schema(
+export const productSchema = new Schema<IProduct>(
 	{
 		name: {
 			type: String,
-			require: true,
+			required: true,
 		},
 		description: {
 			type: String,
-			require: true,
+			required: true,
 		},
 		image: {
 			type: String,
-			require: true,
+			required: true,
 		},
 		quantity: {
 			type: Number,
-			require: true,
+			required: true,
 		},
 	},
 	{ timestamps: true }
 )
 
-export const ProductDb = mongoose.model("products", productSchema)
+export const ProductDb = mongoose.model<IProduct>("products", productSchema)
