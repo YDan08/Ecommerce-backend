@@ -1,14 +1,23 @@
-import express from "express"
-import { config } from "dotenv"
+import { ApolloServer } from "apollo-server"
+import "reflect-metadata"
+import { buildSchema } from "type-graphql"
+import { ProductResolver } from "./product"
+import { db } from "./db/db"
 
-config()
+const bootstrap = async () => {
+	const schema = await buildSchema({
+		resolvers: [ProductResolver],
+	})
 
-const app = express()
+	const server = new ApolloServer({
+		schema,
+	})
 
-const port = process.env.PORT || 3000
+	await db()
 
-app.get("/", (req, res) => {
-	res.send("hello")
-})
+	const { url } = await server.listen(process.env.PORT || 4000)
 
-app.listen(port, () => console.log("Start server"))
+	console.log(`Server running on ${url}`)
+}
+
+bootstrap()
