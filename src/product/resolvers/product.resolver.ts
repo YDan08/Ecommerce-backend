@@ -1,19 +1,29 @@
 import { Arg, Mutation, Query, Resolver } from "type-graphql"
-import { ClaimAvailabilityDto, CreateProductDto, GetProductDto } from "../dtos"
+import { ClaimAvailabilityDto, CreateProductDto } from "../dtos"
 import { ProductModel } from "../models"
 import { ProductDb } from "../../db/models/Product.db"
 @Resolver(() => ProductModel)
 export class ProductResolver {
 	@Query(() => ProductModel)
-	async getProduct(@Arg("data", () => GetProductDto) data: GetProductDto) {
-		console.log(data.id)
-		const products = await ProductDb.findById(data.id)
+	async getProduct(@Arg("id", () => String) id: string) {
+		const products = await ProductDb.findById(id)
 		return products
 	}
 
 	@Query(() => [ProductModel])
-	async findProducts() {
+	async listProducts() {
 		const products = await ProductDb.find()
+		return products
+	}
+
+	@Query(() => [ProductModel])
+	async findProducts(@Arg("data", () => [String]) data: string[]) {
+		console.log(data)
+		const products = await ProductDb.find({
+			_id: {
+				$in: data,
+			},
+		})
 		return products
 	}
 
