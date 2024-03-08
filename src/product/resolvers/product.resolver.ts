@@ -1,7 +1,8 @@
 import { Arg, Mutation, Query, Resolver } from "type-graphql"
 import { ClaimAvailabilityDto, CreateProductDto } from "../dtos"
 import { ProductModel } from "../models"
-import { ProductDb } from "../../db/models/Product.db"
+import { ProductDb } from "../../db"
+
 @Resolver(() => ProductModel)
 export class ProductResolver {
 	@Query(() => ProductModel)
